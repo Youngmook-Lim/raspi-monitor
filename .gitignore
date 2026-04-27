@@ -1,0 +1,17 @@
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python
+server/__pycache__/
+server/*.pyc
+server/.venv/
+*.pyc
+__pycache__/
+
+# OS
+.DS_Store
+
+# Claude
+.claude/
