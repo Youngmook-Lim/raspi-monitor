@@ -12,7 +12,7 @@ systemd service snippet at bottom of file.
 from flask import Flask, jsonify, Response, stream_with_context, send_from_directory
 from flask_cors import CORS
 from pathlib import Path
-import psutil, platform, socket, time, os, json, threading, subprocess
+import psutil, platform, socket, time, os, json, threading
 
 app = Flask(__name__)
 CORS(app)
@@ -59,10 +59,13 @@ def cpu_temp():
 
 def pi_model():
     try:
-        with open('/sys/firmware/devicetree/base/model', 'rb') as f:
-            return f.read().decode('utf-8', errors='replace').rstrip('\x00').strip()
+        with open('/proc/cpuinfo') as f:
+            for line in f:
+                if line.startswith('Model'):
+                    return line.split(':', 1)[1].strip()
     except Exception:
-        return platform.machine()
+        pass
+    return platform.machine()
 
 
 def cpu_governor():
@@ -75,10 +78,12 @@ def cpu_governor():
 
 def active_iface():
     try:
-        out = subprocess.check_output(['ip', 'route', 'show', 'default'], text=True)
-        for token, nxt in zip(out.split(), out.split()[1:]):
-            if token == 'dev':
-                return nxt
+        with open('/proc/net/route') as f:
+            next(f)  # skip header
+            for line in f:
+                fields = line.strip().split()
+                if fields[1] == '00000000' and fields[7] == '00000000':
+                    return fields[0]
     except Exception:
         pass
     return 'eth0'
