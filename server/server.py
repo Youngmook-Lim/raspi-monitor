@@ -12,7 +12,7 @@ systemd service snippet at bottom of file.
 from flask import Flask, jsonify, Response, stream_with_context, send_from_directory
 from flask_cors import CORS
 from pathlib import Path
-import psutil, platform, socket, time, os, json, threading
+import psutil, platform, socket, time, os, json, threading, subprocess
 
 app = Flask(__name__)
 CORS(app)
@@ -74,18 +74,14 @@ def cpu_governor():
 
 
 def active_iface():
-    stats = psutil.net_if_stats()
-    counters = psutil.net_io_counters(pernic=True)
-    best = max(
-        (
-            (name, c.bytes_recv + c.bytes_sent)
-            for name, c in counters.items()
-            if name != 'lo' and stats.get(name) and stats[name].isup
-        ),
-        key=lambda x: x[1],
-        default=('eth0', 0),
-    )
-    return best[0]
+    try:
+        out = subprocess.check_output(['ip', 'route', 'show', 'default'], text=True)
+        for token, nxt in zip(out.split(), out.split()[1:]):
+            if token == 'dev':
+                return nxt
+    except Exception:
+        pass
+    return 'eth0'
 
 
 def top_processes(n=8):
