@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { StatsPayload } from '../types'
 import { fmtBytes } from '../utils/format'
 import { clamp } from '../utils/colors'
 
 const POLL_MS = 2000
 const W = 400, H = 36
+const HIST_LEN = 60
+const STEP = W / (HIST_LEN - 1)
 
 interface SparkProps {
   vals: number[]
@@ -14,28 +16,41 @@ interface SparkProps {
 
 function NetSparkline({ vals, color, gradId }: SparkProps) {
   const [hover, setHover] = useState<{ mouseX: number; x: number; y: number; val: number; secsAgo: number } | null>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [svgW, setSvgW] = useState(W)
 
-  if (vals.length === 0) {
-    return <div style={{ height: `${H}px` }} />
-  }
+  useEffect(() => {
+    const el = svgRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setSvgW(el.getBoundingClientRect().width))
+    ro.observe(el)
+    setSvgW(el.getBoundingClientRect().width)
+    return () => ro.disconnect()
+  }, [])
+
+  if (vals.length === 0) return <div style={{ height: `${H}px` }} />
 
   const max = Math.max(...vals, 1)
   const pts = vals.map((v, i) => [
-    vals.length === 1 ? W / 2 : (i / (vals.length - 1)) * W,
+    W - (vals.length - 1 - i) * STEP,
     H - clamp(v / max, 0, 1) * (H - 6) - 3,
   ])
   const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ')
-  const areaPath = `${linePath} L${W},${H} L0,${H} Z`
+  const areaPath = `${linePath} L${W},${H} L${pts[0][0].toFixed(1)},${H} Z`
 
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const rx = clamp((e.clientX - rect.left) / rect.width, 0, 1)
     const mouseX = rx * W
-    const idx = Math.round(rx * (vals.length - 1))
+    const leftX = W - (vals.length - 1) * STEP
+    const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
     const [hx, hy] = pts[idx]
     const secsAgo = Math.round((vals.length - 1 - idx) * (POLL_MS / 1000))
     setHover({ mouseX, x: hx, y: hy, val: vals[idx], secsAgo })
   }
+
+  const scaleX = svgW / W, scaleY = H / H  // scaleY=1 since CSS height matches viewBox H
+  const dotRx = 3.5 / scaleX, dotRy = 3.5 / scaleY
 
   return (
     <div style={{ position: 'relative' }}>
@@ -49,6 +64,7 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
         </div>
       )}
       <svg
+        ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
         style={{ width: '100%', height: `${H}px`, display: 'block', cursor: 'crosshair', overflow: 'visible' }}
@@ -68,7 +84,7 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
           <>
             <line x1={hover.mouseX} y1={0} x2={hover.mouseX} y2={H}
               stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
-            <circle cx={hover.x} cy={hover.y} r={3.5} fill={color}
+            <ellipse cx={hover.x} cy={hover.y} rx={dotRx} ry={dotRy} fill={color}
               style={{ filter: `drop-shadow(0 0 5px ${color})` }} />
           </>
         )}
