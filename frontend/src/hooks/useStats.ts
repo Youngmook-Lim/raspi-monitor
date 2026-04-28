@@ -69,7 +69,7 @@ function simulate(prev: StatsPayload): StatsPayload {
 
 export function useStats() {
   const [data, setData] = useState<StatsPayload>(INIT)
-  const [history, setHistory] = useState<StatsPayload[]>(Array(HIST_LEN).fill(INIT))
+  const [history, setHistory] = useState<StatsPayload[]>([])
   const [live, setLive] = useState(false)
   const dataRef = useRef<StatsPayload>(INIT)
 

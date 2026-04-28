@@ -12,6 +12,7 @@ interface HistoryChartProps {
 
 function CpuHistoryChart({ history }: HistoryChartProps) {
   const [hover, setHover] = useState<{ mouseX: number; x: number; y: number; pct: number; secsAgo: number } | null>(null)
+  if (history.length === 0) return null
   const vals = history.map(h => h.cpu?.total ?? 0)
   const pts = vals.map((v, i) => [
     vals.length === 1 ? W / 2 : (i / (vals.length - 1)) * W,
