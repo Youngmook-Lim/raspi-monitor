@@ -6,8 +6,8 @@ interface Props { data: StatsPayload }
 
 export function RamCard({ data }: Props) {
   const { total, used, swap_total, swap_used } = data.memory
-  const rPct = (used / total) * 100
-  const sPct = (swap_used / swap_total) * 100
+  const rPct = total > 0 ? (used / total) * 100 : 0
+  const sPct = swap_total > 0 ? (swap_used / swap_total) * 100 : 0
 
   return (
     <div className="card card-r">

@@ -19,7 +19,7 @@ export function Sparkline({ data, color = '#a78bfa', h = 38 }: Props) {
     cv.height = h
     const max = Math.max(...data, 1)
     const pts = data.map((v, i) => [
-      (i / (data.length - 1)) * w,
+      data.length === 1 ? w / 2 : (i / (data.length - 1)) * w,
       h - clamp(v / max, 0, 1) * (h - 6) - 3,
     ])
     ctx.clearRect(0, 0, w, h)

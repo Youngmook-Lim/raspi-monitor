@@ -7,7 +7,7 @@ interface Props { data: StatsPayload }
 
 export function DiskCard({ data }: Props) {
   const { total, used, read_bps, write_bps } = data.disk
-  const pct = (used / total) * 100
+  const pct = total > 0 ? (used / total) * 100 : 0
 
   return (
     <div className="card card-d">

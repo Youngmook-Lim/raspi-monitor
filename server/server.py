@@ -11,33 +11,35 @@ systemd service snippet at bottom of file.
 
 from flask import Flask, jsonify, Response, stream_with_context
 from flask_cors import CORS
-import psutil, platform, socket, time, os, json
+import psutil, platform, socket, time, os, json, threading
 
 app = Flask(__name__)
 CORS(app)
 
 # ── I/O rate tracking ────────────────────────────────────────────────────────
-_prev_net  = psutil.net_io_counters()
-_prev_disk = psutil.disk_io_counters()
-_prev_time = time.monotonic()
+_prev_net   = psutil.net_io_counters()
+_prev_disk  = psutil.disk_io_counters()
+_prev_time  = time.monotonic()
+_rates_lock = threading.Lock()
 
 
 def _rates():
     global _prev_net, _prev_disk, _prev_time
-    now_net  = psutil.net_io_counters()
-    now_disk = psutil.disk_io_counters()
-    now_time = time.monotonic()
-    dt = max(now_time - _prev_time, 0.001)
+    with _rates_lock:
+        now_net  = psutil.net_io_counters()
+        now_disk = psutil.disk_io_counters()
+        now_time = time.monotonic()
+        dt = max(now_time - _prev_time, 0.001)
 
-    rx = (now_net.bytes_recv  - _prev_net.bytes_recv)  / dt
-    tx = (now_net.bytes_sent  - _prev_net.bytes_sent)  / dt
-    rd = (now_disk.read_bytes  - _prev_disk.read_bytes)  / dt
-    wr = (now_disk.write_bytes - _prev_disk.write_bytes) / dt
+        rx = (now_net.bytes_recv  - _prev_net.bytes_recv)  / dt
+        tx = (now_net.bytes_sent  - _prev_net.bytes_sent)  / dt
+        rd = (now_disk.read_bytes  - _prev_disk.read_bytes)  / dt
+        wr = (now_disk.write_bytes - _prev_disk.write_bytes) / dt
 
-    _prev_net  = now_net
-    _prev_disk = now_disk
-    _prev_time = now_time
-    return max(rx, 0), max(tx, 0), max(rd, 0), max(wr, 0)
+        _prev_net  = now_net
+        _prev_disk = now_disk
+        _prev_time = now_time
+        return max(rx, 0), max(tx, 0), max(rd, 0), max(wr, 0)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

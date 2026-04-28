@@ -14,7 +14,7 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
   const [hover, setHover] = useState<{ x: number; y: number; pct: number; secsAgo: number } | null>(null)
   const vals = history.map(h => h.cpu?.total ?? 0)
   const pts = vals.map((v, i) => [
-    (i / (vals.length - 1)) * W,
+    vals.length === 1 ? W / 2 : (i / (vals.length - 1)) * W,
     H - clamp(v / 100, 0, 1) * (H - 10) - 5,
   ])
   const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ')
