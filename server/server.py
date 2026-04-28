@@ -9,8 +9,9 @@ Dashboard runs at: http://localhost:5173 (dev) or served from frontend/dist/
 systemd service snippet at bottom of file.
 """
 
-from flask import Flask, jsonify, Response, stream_with_context
+from flask import Flask, jsonify, Response, stream_with_context, send_from_directory
 from flask_cors import CORS
+from pathlib import Path
 import psutil, platform, socket, time, os, json, threading
 
 app = Flask(__name__)
@@ -177,6 +178,15 @@ def stream():
             'X-Accel-Buffering': 'no',      # disable Nginx proxy buffering
         },
     )
+
+
+# ── Static (production) ───────────────────────────────────────────────────────
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path: str):
+    if path and (Path('dist') / path).exists():
+        return send_from_directory('dist', path)
+    return send_from_directory('dist', 'index.html')
 
 
 # ── Run ───────────────────────────────────────────────────────────────────────

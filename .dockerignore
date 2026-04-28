@@ -1,0 +1,10 @@
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+server/__pycache__/
+server/*.pyc
+server/.venv/
+.git/
+.claude/
+docs/
+.DS_Store

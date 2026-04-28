@@ -1,0 +1,15 @@
+services:
+  rpi-monitor:
+    build: .
+    container_name: rpi-monitor
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /sys:/sys:ro
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy   # change to match your NPM network name
