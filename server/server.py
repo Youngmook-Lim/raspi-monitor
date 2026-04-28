@@ -59,7 +59,7 @@ def cpu_temp():
 
 def pi_model():
     try:
-        with open('/proc/device-tree/model', 'rb') as f:
+        with open('/sys/firmware/devicetree/base/model', 'rb') as f:
             return f.read().decode('utf-8', errors='replace').rstrip('\x00').strip()
     except Exception:
         return platform.machine()
