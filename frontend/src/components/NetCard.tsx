@@ -49,8 +49,8 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
     setHover({ mouseX, x: hx, y: hy, val: vals[idx], secsAgo })
   }
 
-  const scaleX = svgW / W, scaleY = H / H  // scaleY=1 since CSS height matches viewBox H
-  const dotRx = 3.5 / scaleX, dotRy = 3.5 / scaleY
+  const dotScreenX = hover ? hover.x * (svgW / W) : 0
+  const dotScreenY = hover ? hover.y : 0  // viewBox H === CSS px height, so scale = 1
 
   return (
     <div style={{ position: 'relative' }}>
@@ -81,14 +81,19 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
         <path d={linePath} fill="none" stroke={color} strokeWidth="1.5"
           style={{ filter: `drop-shadow(0 0 3px ${color})` }} />
         {hover && (
-          <>
-            <line x1={hover.mouseX} y1={0} x2={hover.mouseX} y2={H}
-              stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
-            <ellipse cx={hover.x} cy={hover.y} rx={dotRx} ry={dotRy} fill={color}
-              style={{ filter: `drop-shadow(0 0 5px ${color})` }} />
-          </>
+          <line x1={hover.mouseX} y1={0} x2={hover.mouseX} y2={H}
+            stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
         )}
       </svg>
+      {hover && (
+        <div style={{
+          position: 'absolute', pointerEvents: 'none',
+          left: `${dotScreenX}px`, top: `${dotScreenY}px`,
+          width: '7px', height: '7px', borderRadius: '50%',
+          background: color, boxShadow: `0 0 5px ${color}`,
+          transform: 'translate(-50%, -50%)',
+        }} />
+      )}
     </div>
   )
 }
