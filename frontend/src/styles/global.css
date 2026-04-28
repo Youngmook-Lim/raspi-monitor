@@ -226,19 +226,47 @@ body {
 .hdr-dot-mock    { background: var(--yellow); }
 
 /* theme toggle button */
-.theme-btn {
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  color: var(--dim);
-  font-family: inherit;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  padding: 3px 9px;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  padding: 0;
+  font-family: inherit;
 }
-.theme-btn:hover { border-color: var(--border2); color: var(--green); }
+.theme-toggle-sun,
+.theme-toggle-moon {
+  font-size: 12px;
+  line-height: 1;
+  transition: opacity 0.3s;
+}
+.theme-toggle-sun  { color: #f472b6; opacity: 0.4; }
+.theme-toggle-moon { color: #a78bfa; opacity: 0.4; }
+.theme-toggle:hover .theme-toggle-sun,
+.theme-toggle:hover .theme-toggle-moon { opacity: 0.9; }
+.theme-toggle-track {
+  position: relative;
+  width: 38px;
+  height: 18px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  transition: background 0.3s, border-color 0.3s;
+  flex-shrink: 0;
+}
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--green);
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+  box-shadow: 0 0 6px var(--green);
+}
 
 /* ── PROCESS TABLE ── */
 .proc-table { width: 100%; border-collapse: collapse; font-size: 9.5px; }

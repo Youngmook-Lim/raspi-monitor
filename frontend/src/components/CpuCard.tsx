@@ -11,7 +11,7 @@ interface HistoryChartProps {
 }
 
 function CpuHistoryChart({ history }: HistoryChartProps) {
-  const [hover, setHover] = useState<{ x: number; y: number; pct: number; secsAgo: number } | null>(null)
+  const [hover, setHover] = useState<{ mouseX: number; x: number; y: number; pct: number; secsAgo: number } | null>(null)
   const vals = history.map(h => h.cpu?.total ?? 0)
   const pts = vals.map((v, i) => [
     vals.length === 1 ? W / 2 : (i / (vals.length - 1)) * W,
@@ -23,10 +23,11 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const rx = clamp((e.clientX - rect.left) / rect.width, 0, 1)
+    const mouseX = rx * W
     const idx = Math.round(rx * (vals.length - 1))
     const [hx, hy] = pts[idx]
     const secsAgo = Math.round((vals.length - 1 - idx) * (POLL_MS / 1000))
-    setHover({ x: hx, y: hy, pct: vals[idx], secsAgo })
+    setHover({ mouseX, x: hx, y: hy, pct: vals[idx], secsAgo })
   }
 
   const dotCol = hover ? cpuColHex(hover.pct) : '#a78bfa'
@@ -45,6 +46,7 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
       </div>
       <svg
         viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
         style={{ width: '100%', height: '62px', display: 'block', overflow: 'visible', cursor: 'crosshair' }}
         onMouseMove={onMove}
         onMouseLeave={() => setHover(null)}
@@ -73,7 +75,7 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
           style={{ filter: 'drop-shadow(0 0 3px rgba(167,139,250,0.5))' }} />
         {hover && (
           <>
-            <line x1={hover.x} y1={0} x2={hover.x} y2={H}
+            <line x1={hover.mouseX} y1={0} x2={hover.mouseX} y2={H}
               stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
             <circle cx={hover.x} cy={hover.y} r={8}
               fill="none" stroke={dotCol} strokeWidth="1" opacity={0.3} />

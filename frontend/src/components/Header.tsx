@@ -39,8 +39,12 @@ export function Header({ data, live, theme, onToggleTheme }: Props) {
           <span className="hdr-date">{dateStr}</span>
           <span className="hdr-time">{timeStr}</span>
           <span className="hdr-up">↑ {fmtUptime(data.uptime)}</span>
-          <button className="theme-btn" onClick={onToggleTheme}>
-            {theme === 'dark' ? '◐ LIGHT' : '● DARK'}
+          <button className="theme-toggle" onClick={onToggleTheme} aria-label="Toggle theme">
+            <span className="theme-toggle-sun">☀</span>
+            <span className="theme-toggle-track">
+              <span className="theme-toggle-thumb" style={{ transform: theme === 'dark' ? 'translateX(20px)' : 'translateX(0)' }} />
+            </span>
+            <span className="theme-toggle-moon">☽</span>
           </button>
         </div>
       </div>

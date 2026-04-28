@@ -30,7 +30,7 @@ export default function App() {
         <LoadCard data={data} />
         <ProcsCard data={data} />
         <ModelCard data={data} />
-        <MatrixCard />
+        <MatrixCard theme={theme} />
         <WaveformCard data={data} />
       </div>
     </>
