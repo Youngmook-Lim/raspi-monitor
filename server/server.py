@@ -71,10 +71,18 @@ def cpu_governor():
 
 
 def active_iface():
-    for name, s in psutil.net_if_stats().items():
-        if name != 'lo' and s.isup:
-            return name
-    return 'eth0'
+    stats = psutil.net_if_stats()
+    counters = psutil.net_io_counters(pernic=True)
+    best = max(
+        (
+            (name, c.bytes_recv + c.bytes_sent)
+            for name, c in counters.items()
+            if name != 'lo' and stats.get(name) and stats[name].isup
+        ),
+        key=lambda x: x[1],
+        default=('eth0', 0),
+    )
+    return best[0]
 
 
 def top_processes(n=8):
