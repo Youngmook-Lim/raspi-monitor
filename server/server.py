@@ -111,7 +111,7 @@ def build_stats():
     load      = [round(x, 2) for x in os.getloadavg()]
 
     return {
-        'hostname': socket.gethostname(),
+        'hostname': Path('/etc/hostname').read_text().strip() if Path('/etc/hostname').exists() else socket.gethostname(),
         'model':    pi_model(),
         'os':       f"{platform.system()} {platform.version()[:50]}",
         'kernel':   platform.release(),
