@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import type { StatsPayload } from '../types'
 import { clamp, rw } from '../utils/colors'
 
-const HIST_LEN = 60
 
 const INIT: StatsPayload = {
   hostname: 'RPi-YML',
