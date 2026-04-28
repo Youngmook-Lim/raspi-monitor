@@ -82,7 +82,7 @@ export function useStats() {
         const next = simulate(dataRef.current)
         dataRef.current = next
         setData(next)
-        setHistory(h => [...h.slice(1), next])
+        setHistory(h => { const n = [...h, next]; return n.length > 60 ? n.slice(1) : n })
       }, 2000)
     }
 
@@ -100,7 +100,7 @@ export function useStats() {
           setLive(true)
           dataRef.current = next
           setData(next)
-          setHistory(h => [...h.slice(1), next])
+          setHistory(h => { const n = [...h, next]; return n.length > 60 ? n.slice(1) : n })
         } catch {
           // ignore malformed frames
         }
