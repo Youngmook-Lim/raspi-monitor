@@ -12,9 +12,7 @@ interface HistoryChartProps {
   history: StatsPayload[]
 }
 
-interface CpuHover {
-  mouseX: number; x: number; y: number; pct: number; secsAgo: number; svgW: number
-}
+interface CpuHover { rx: number; svgW: number }
 
 function CpuHistoryChart({ history }: HistoryChartProps) {
   const [hover, setHover] = useState<CpuHover | null>(null)
@@ -32,17 +30,22 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const rx = clamp((e.clientX - rect.left) / rect.width, 0, 1)
-    const mouseX = rx * W
-    const leftX = W - (vals.length - 1) * STEP
-    const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
-    const [hx, hy] = pts[idx]
-    const secsAgo = Math.round((vals.length - 1 - idx) * (POLL_MS / 1000))
-    setHover({ mouseX, x: hx, y: hy, pct: vals[idx], secsAgo, svgW: rect.width })
+    setHover({ rx, svgW: rect.width })
   }
 
-  const dotCol = hover ? cpuColHex(hover.pct) : '#a78bfa'
-  const dotScreenX = hover ? hover.x * (hover.svgW / W) : 0
-  const dotScreenY = hover ? hover.y * (SVG_H / H) : 0
+  // Derive snapped point from current data on every render so the crosshair
+  // follows the leftmost as new history arrives.
+  const snap = hover ? (() => {
+    const mouseX = hover.rx * W
+    const leftX = W - (vals.length - 1) * STEP
+    const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
+    const [x, y] = pts[idx]
+    return { x, y, pct: vals[idx], secsAgo: Math.round((vals.length - 1 - idx) * (POLL_MS / 1000)) }
+  })() : null
+
+  const dotCol = snap ? cpuColHex(snap.pct) : '#a78bfa'
+  const dotScreenX = snap && hover ? snap.x * (hover.svgW / W) : 0
+  const dotScreenY = snap ? snap.y * (SVG_H / H) : 0
 
   return (
     <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
@@ -51,8 +54,8 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
         display: 'flex', justifyContent: 'space-between',
       }}>
         <span>CPU HISTORY <span style={{ color: 'var(--dim2)' }}>· 60s</span></span>
-        {hover
-          ? <span style={{ color: dotCol, transition: 'color 0.2s' }}>{hover.pct.toFixed(1)}% · {hover.secsAgo}s ago</span>
+        {snap
+          ? <span style={{ color: dotCol, transition: 'color 0.2s' }}>{snap.pct.toFixed(1)}% · {snap.secsAgo}s ago</span>
           : <span style={{ color: 'var(--dim2)' }}>hover to inspect</span>
         }
       </div>
@@ -80,8 +83,8 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
           <path d={areaPath} fill="url(#cpuHistGrad)" />
           <path d={linePath} fill="none" stroke="#a78bfa" strokeWidth="1.5"
             style={{ filter: 'drop-shadow(0 0 3px rgba(167,139,250,0.5))' }} />
-          {hover && (
-            <line x1={hover.mouseX} y1={0} x2={hover.mouseX} y2={H}
+          {snap && (
+            <line x1={snap.x} y1={0} x2={snap.x} y2={H}
               stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
           )}
         </svg>
@@ -98,7 +101,7 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
             }}>{g}%</div>
           )
         })}
-        {hover && (
+        {snap && (
           <>
             <div style={{
               position: 'absolute', pointerEvents: 'none',

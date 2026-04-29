@@ -14,9 +14,7 @@ interface SparkProps {
   gradId: string
 }
 
-interface NetHover {
-  mouseX: number; x: number; y: number; val: number; secsAgo: number; svgW: number
-}
+interface NetHover { rx: number; svgW: number }
 
 function NetSparkline({ vals, color, gradId }: SparkProps) {
   const [hover, setHover] = useState<NetHover | null>(null)
@@ -34,26 +32,29 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const rx = clamp((e.clientX - rect.left) / rect.width, 0, 1)
-    const mouseX = rx * W
-    const leftX = W - (vals.length - 1) * STEP
-    const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
-    const [hx, hy] = pts[idx]
-    const secsAgo = Math.round((vals.length - 1 - idx) * (POLL_MS / 1000))
-    setHover({ mouseX, x: hx, y: hy, val: vals[idx], secsAgo, svgW: rect.width })
+    setHover({ rx, svgW: rect.width })
   }
 
-  const dotScreenX = hover ? hover.x * (hover.svgW / W) : 0
-  const dotScreenY = hover ? hover.y : 0  // viewBox H === CSS px height, so scale = 1
+  const snap = hover ? (() => {
+    const mouseX = hover.rx * W
+    const leftX = W - (vals.length - 1) * STEP
+    const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
+    const [x, y] = pts[idx]
+    return { x, y, val: vals[idx], secsAgo: Math.round((vals.length - 1 - idx) * (POLL_MS / 1000)) }
+  })() : null
+
+  const dotScreenX = snap && hover ? snap.x * (hover.svgW / W) : 0
+  const dotScreenY = snap ? snap.y : 0  // viewBox H === CSS px height, so scale = 1
 
   return (
     <div style={{ position: 'relative' }}>
-      {hover && (
+      {snap && (
         <div style={{
           position: 'absolute', top: 0, right: 0,
           fontSize: '8px', color, letterSpacing: '0.08em',
           pointerEvents: 'none', zIndex: 1,
         }}>
-          {fmtBytes(hover.val)}/s · {hover.secsAgo}s ago
+          {fmtBytes(snap.val)}/s · {snap.secsAgo}s ago
         </div>
       )}
       <svg
@@ -72,12 +73,12 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
         <path d={areaPath} fill={`url(#${gradId})`} />
         <path d={linePath} fill="none" stroke={color} strokeWidth="1.5"
           style={{ filter: `drop-shadow(0 0 3px ${color})` }} />
-        {hover && (
-          <line x1={hover.mouseX} y1={0} x2={hover.mouseX} y2={H}
+        {snap && (
+          <line x1={snap.x} y1={0} x2={snap.x} y2={H}
             stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
         )}
       </svg>
-      {hover && (
+      {snap && (
         <div style={{
           position: 'absolute', pointerEvents: 'none',
           left: `${dotScreenX}px`, top: `${dotScreenY}px`,
