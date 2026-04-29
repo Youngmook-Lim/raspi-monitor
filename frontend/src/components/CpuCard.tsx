@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import type { StatsPayload } from '../types'
 import { RingGauge } from './gauges/RingGauge'
 import { cpuColHex, clamp } from '../utils/colors'
@@ -12,19 +12,12 @@ interface HistoryChartProps {
   history: StatsPayload[]
 }
 
-function CpuHistoryChart({ history }: HistoryChartProps) {
-  const [hover, setHover] = useState<{ mouseX: number; x: number; y: number; pct: number; secsAgo: number } | null>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [svgW, setSvgW] = useState(W)
+interface CpuHover {
+  mouseX: number; x: number; y: number; pct: number; secsAgo: number; svgW: number
+}
 
-  useEffect(() => {
-    const el = svgRef.current
-    if (!el) return
-    const ro = new ResizeObserver(() => setSvgW(el.getBoundingClientRect().width))
-    ro.observe(el)
-    setSvgW(el.getBoundingClientRect().width)
-    return () => ro.disconnect()
-  }, [])
+function CpuHistoryChart({ history }: HistoryChartProps) {
+  const [hover, setHover] = useState<CpuHover | null>(null)
 
   if (history.length === 0) return null
 
@@ -44,11 +37,11 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
     const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
     const [hx, hy] = pts[idx]
     const secsAgo = Math.round((vals.length - 1 - idx) * (POLL_MS / 1000))
-    setHover({ mouseX, x: hx, y: hy, pct: vals[idx], secsAgo })
+    setHover({ mouseX, x: hx, y: hy, pct: vals[idx], secsAgo, svgW: rect.width })
   }
 
   const dotCol = hover ? cpuColHex(hover.pct) : '#a78bfa'
-  const dotScreenX = hover ? hover.x * (svgW / W) : 0
+  const dotScreenX = hover ? hover.x * (hover.svgW / W) : 0
   const dotScreenY = hover ? hover.y * (SVG_H / H) : 0
 
   return (
@@ -65,7 +58,6 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
       </div>
       <div style={{ position: 'relative' }}>
         <svg
-          ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
           preserveAspectRatio="none"
           style={{ width: '100%', height: `${SVG_H}px`, display: 'block', overflow: 'visible', cursor: 'crosshair' }}
@@ -81,14 +73,8 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
           {[25, 50, 75].map(g => {
             const gy = H - (g / 100) * (H - 10) - 5
             return (
-              <g key={g}>
-                <line x1={0} y1={gy} x2={W} y2={gy}
-                  stroke="rgba(139,108,240,0.07)" strokeWidth="1" strokeDasharray="4,4" />
-                <text x={W - 1} y={gy - 3} textAnchor="end"
-                  fill="rgba(139,108,240,0.28)" fontSize="7" fontFamily="JetBrains Mono">
-                  {g}%
-                </text>
-              </g>
+              <line key={g} x1={0} y1={gy} x2={W} y2={gy}
+                stroke="rgba(139,108,240,0.07)" strokeWidth="1" strokeDasharray="4,4" />
             )
           })}
           <path d={areaPath} fill="url(#cpuHistGrad)" />
@@ -99,6 +85,19 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
               stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
           )}
         </svg>
+        {[25, 50, 75].map(g => {
+          const gy = H - (g / 100) * (H - 10) - 5
+          const topPx = gy * (SVG_H / H) - 3
+          return (
+            <div key={g} style={{
+              position: 'absolute', right: '2px', top: `${topPx}px`,
+              transform: 'translateY(-100%)',
+              fontSize: '7px', fontFamily: 'JetBrains Mono',
+              color: 'rgba(139,108,240,0.28)',
+              pointerEvents: 'none', lineHeight: 1,
+            }}>{g}%</div>
+          )
+        })}
         {hover && (
           <>
             <div style={{

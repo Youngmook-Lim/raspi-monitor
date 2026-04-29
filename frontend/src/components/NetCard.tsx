@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import type { StatsPayload } from '../types'
 import { fmtBytes } from '../utils/format'
 import { clamp } from '../utils/colors'
@@ -14,19 +14,12 @@ interface SparkProps {
   gradId: string
 }
 
-function NetSparkline({ vals, color, gradId }: SparkProps) {
-  const [hover, setHover] = useState<{ mouseX: number; x: number; y: number; val: number; secsAgo: number } | null>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [svgW, setSvgW] = useState(W)
+interface NetHover {
+  mouseX: number; x: number; y: number; val: number; secsAgo: number; svgW: number
+}
 
-  useEffect(() => {
-    const el = svgRef.current
-    if (!el) return
-    const ro = new ResizeObserver(() => setSvgW(el.getBoundingClientRect().width))
-    ro.observe(el)
-    setSvgW(el.getBoundingClientRect().width)
-    return () => ro.disconnect()
-  }, [])
+function NetSparkline({ vals, color, gradId }: SparkProps) {
+  const [hover, setHover] = useState<NetHover | null>(null)
 
   if (vals.length === 0) return <div style={{ height: `${H}px` }} />
 
@@ -46,10 +39,10 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
     const idx = clamp(Math.round((mouseX - leftX) / STEP), 0, vals.length - 1)
     const [hx, hy] = pts[idx]
     const secsAgo = Math.round((vals.length - 1 - idx) * (POLL_MS / 1000))
-    setHover({ mouseX, x: hx, y: hy, val: vals[idx], secsAgo })
+    setHover({ mouseX, x: hx, y: hy, val: vals[idx], secsAgo, svgW: rect.width })
   }
 
-  const dotScreenX = hover ? hover.x * (svgW / W) : 0
+  const dotScreenX = hover ? hover.x * (hover.svgW / W) : 0
   const dotScreenY = hover ? hover.y : 0  // viewBox H === CSS px height, so scale = 1
 
   return (
@@ -64,7 +57,6 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
         </div>
       )}
       <svg
-        ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
         style={{ width: '100%', height: `${H}px`, display: 'block', cursor: 'crosshair', overflow: 'visible' }}
