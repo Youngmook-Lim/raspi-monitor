@@ -23,7 +23,7 @@ export function LoadCard({ data }: Props) {
             }}>
               {val.toFixed(2)}
             </div>
-            <div style={{ fontSize: '8px', color: 'var(--dim)', marginTop: '4px', letterSpacing: '0.1em' }}>
+            <div style={{ fontSize: '9.5px', color: 'var(--dim)', marginTop: '4px', letterSpacing: '0.1em' }}>
               {lbl}
             </div>
             <div className="bar-track" style={{ height: '3px', marginTop: '6px' }}>

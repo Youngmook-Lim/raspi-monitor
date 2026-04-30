@@ -50,13 +50,13 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
   return (
     <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
       <div style={{
-        fontSize: '8px', color: 'var(--dim)', letterSpacing: '0.1em', marginBottom: '6px',
+        fontSize: '9.5px', color: 'var(--dim)', letterSpacing: '0.1em', marginBottom: '6px',
         display: 'flex', justifyContent: 'space-between',
       }}>
-        <span>CPU HISTORY <span style={{ color: 'var(--dim2)' }}>· 60s</span></span>
+        <span>CPU HISTORY <span style={{ color: 'var(--dim)' }}>· 60s</span></span>
         {snap
           ? <span style={{ color: dotCol, transition: 'color 0.2s' }}>{snap.pct.toFixed(1)}% · {snap.secsAgo}s ago</span>
-          : <span style={{ color: 'var(--dim2)' }}>hover to inspect</span>
+          : <span style={{ color: 'var(--dim)' }}>hover to inspect</span>
         }
       </div>
       <div style={{ position: 'relative' }}>
@@ -95,8 +95,8 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
             <div key={g} style={{
               position: 'absolute', right: '2px', top: `${topPx}px`,
               transform: 'translateY(-100%)',
-              fontSize: '7px', fontFamily: 'JetBrains Mono',
-              color: 'rgba(139,108,240,0.28)',
+              fontSize: '8px', fontFamily: 'JetBrains Mono',
+              color: 'rgba(167,139,250,0.52)',
               pointerEvents: 'none', lineHeight: 1,
             }}>{g}%</div>
           )
@@ -138,12 +138,12 @@ export function CpuCard({ data, history }: Props) {
       <div style={{ display: 'flex', gap: '14px', alignItems: 'center', marginBottom: '14px' }}>
         <RingGauge value={total} color={cpuColHex(total)} label="TOTAL" sub={`${freq} MHz`} size={108} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: '8px', color: 'var(--dim)', letterSpacing: '0.1em', marginBottom: '8px' }}>
+          <div style={{ fontSize: '9.5px', color: 'var(--dim)', letterSpacing: '0.1em', marginBottom: '8px' }}>
             PER-CORE UTILISATION
           </div>
           {cores.map((c, i) => (
             <div key={i} style={{ marginBottom: '9px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '3px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '3px' }}>
                 <span style={{ color: 'var(--dim)' }}>CORE{i}</span>
                 <span style={{ color: cpuColHex(c), transition: 'color 0.5s' }}>{c.toFixed(1)}%</span>
               </div>

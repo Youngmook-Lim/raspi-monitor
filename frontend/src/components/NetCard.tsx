@@ -51,7 +51,7 @@ function NetSparkline({ vals, color, gradId }: SparkProps) {
       {snap && (
         <div style={{
           position: 'absolute', top: 0, right: 0,
-          fontSize: '8px', color, letterSpacing: '0.08em',
+          fontSize: '9px', color, letterSpacing: '0.08em',
           pointerEvents: 'none', zIndex: 1,
         }}>
           {fmtBytes(snap.val)}/s · {snap.secsAgo}s ago
@@ -106,14 +106,14 @@ export function NetCard({ data, history }: Props) {
         NETWORK · {data.network.iface.toUpperCase()} <span className="card-label-blink">█</span>
       </div>
       <div style={{ marginBottom: '10px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '8.5px', marginBottom: '3px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '3px' }}>
           <span style={{ color: 'var(--dim)' }}>▼ RX</span>
           <span style={{ color: 'var(--green)' }}>{fmtBytes(data.network.rx_bps)}/s</span>
         </div>
         <NetSparkline vals={rxH} color="#a78bfa" gradId="rxGrad" />
       </div>
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '8.5px', marginBottom: '3px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '3px' }}>
           <span style={{ color: 'var(--dim)' }}>▲ TX</span>
           <span style={{ color: '#c084fc' }}>{fmtBytes(data.network.tx_bps)}/s</span>
         </div>

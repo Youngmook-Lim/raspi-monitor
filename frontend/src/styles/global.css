@@ -10,9 +10,11 @@
   --purple: #c084fc;
   --yellow: #f472b6;
   --red: #ff4560;
-  --dim: rgba(167,139,250,0.32);
-  --dim2: rgba(167,139,250,0.14);
-  --text: rgba(225,215,255,0.85);
+  /* --dim at 0.32 opacity yielded ~1.7:1 contrast (WCAG AA requires 4.5:1).
+     Raised to 0.70 opacity on a lighter base for ~5.3:1 contrast. */
+  --dim: rgba(190,170,255,0.70);
+  --dim2: rgba(167,139,250,0.18);
+  --text: rgba(230,220,255,0.92);
   --border: rgba(139,108,240,0.12);
   --border2: rgba(167,139,250,0.3);
   --glow-sm: 0 0 8px rgba(167,139,250,0.35);
@@ -136,7 +138,7 @@ body {
 @keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
 
 .card-label {
-  font-size: 8.5px;
+  font-size: 10px;
   letter-spacing: 0.16em;
   color: var(--dim);
   font-weight: 500;
@@ -174,7 +176,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 2px;
 }
-.stat-pill-k { font-size: 7.5px; color: var(--dim); letter-spacing: 0.1em; }
+.stat-pill-k { font-size: 9px; color: var(--dim); letter-spacing: 0.1em; }
 .stat-pill-v { font-size: 11px; color: var(--green); }
 
 /* ── HEADER ── */
@@ -194,11 +196,11 @@ body {
   text-shadow: 0 0 14px rgba(167,139,250,0.6);
 }
 .hdr-sep { color: var(--dim); font-size: 13px; }
-.hdr-sub { font-size: 10px; color: var(--dim); }
-.hdr-date { font-size: 10px; color: var(--dim); }
+.hdr-sub { font-size: 11px; color: var(--dim); }
+.hdr-date { font-size: 11px; color: var(--dim); }
 .hdr-time { font-size: 14px; font-weight: 600; letter-spacing: 0.09em; color: var(--text); }
 .hdr-up {
-  font-size: 9px;
+  font-size: 10.5px;
   color: var(--dim);
   padding: 3px 9px;
   border: 1px solid var(--border);
@@ -269,7 +271,7 @@ body {
 }
 
 /* ── PROCESS TABLE ── */
-.proc-table { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+.proc-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .proc-table th {
   color: var(--dim);
   font-weight: 400;

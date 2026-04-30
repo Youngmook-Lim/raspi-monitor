@@ -13,7 +13,7 @@ export function RamCard({ data }: Props) {
     <div className="card card-r">
       <div className="card-label">MEMORY <span className="card-label-blink">█</span></div>
       <div style={{ marginBottom: '14px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '4px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '4px' }}>
           <span style={{ color: 'var(--dim)' }}>RAM</span>
           <span style={{ color: cpuColHex(rPct) }}>{fmtBytes(used)} / {fmtBytes(total)}</span>
         </div>
@@ -24,19 +24,19 @@ export function RamCard({ data }: Props) {
             boxShadow: `0 0 8px ${cpuColHex(rPct)}`,
           }} />
         </div>
-        <div style={{ textAlign: 'right', fontSize: '8px', color: 'var(--dim)', marginTop: '3px' }}>
+        <div style={{ textAlign: 'right', fontSize: '9px', color: 'var(--dim)', marginTop: '3px' }}>
           {rPct.toFixed(1)}%
         </div>
       </div>
       <div style={{ marginBottom: '14px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '4px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '4px' }}>
           <span style={{ color: 'var(--dim)' }}>SWAP</span>
           <span style={{ color: 'var(--purple)' }}>{fmtBytes(swap_used)} / {fmtBytes(swap_total)}</span>
         </div>
         <div className="bar-track" style={{ height: '7px' }}>
           <div className="bar-fill" style={{ width: `${sPct}%`, background: '#8b7cf8', boxShadow: '0 0 6px #8b7cf8' }} />
         </div>
-        <div style={{ textAlign: 'right', fontSize: '8px', color: 'var(--dim)', marginTop: '3px' }}>
+        <div style={{ textAlign: 'right', fontSize: '9px', color: 'var(--dim)', marginTop: '3px' }}>
           {sPct.toFixed(1)}%
         </div>
       </div>

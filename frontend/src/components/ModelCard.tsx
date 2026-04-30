@@ -18,10 +18,10 @@ export function ModelCard({ data }: Props) {
       <div className="card-label">SYSTEM INFO <span className="card-label-blink">█</span></div>
       {rows.map(([k, v]) => (
         <div key={k} style={{ marginBottom: '9px' }}>
-          <div style={{ fontSize: '7.5px', color: 'var(--dim)', letterSpacing: '0.12em', marginBottom: '2px' }}>
+          <div style={{ fontSize: '9px', color: 'var(--dim)', letterSpacing: '0.12em', marginBottom: '2px' }}>
             {k}
           </div>
-          <div style={{ fontSize: '9.5px', color: 'var(--text)', lineHeight: 1.45, wordBreak: 'break-all' }}>
+          <div style={{ fontSize: '11px', color: 'var(--text)', lineHeight: 1.45, wordBreak: 'break-all' }}>
             {v}
           </div>
         </div>
@@ -32,10 +32,10 @@ export function ModelCard({ data }: Props) {
         border: '1px solid rgba(192,132,252,0.2)',
         borderRadius: '2px',
       }}>
-        <div style={{ fontSize: '7.5px', color: 'rgba(192,132,252,0.5)', marginBottom: '2px', letterSpacing: '0.1em' }}>
+        <div style={{ fontSize: '9px', color: 'var(--dim)', marginBottom: '2px', letterSpacing: '0.1em' }}>
           SSE ENDPOINT
         </div>
-        <div style={{ fontSize: '9px', color: '#c084fc', wordBreak: 'break-all' }}>{API_URL}</div>
+        <div style={{ fontSize: '10.5px', color: '#c084fc', wordBreak: 'break-all' }}>{API_URL}</div>
       </div>
     </div>
   )
