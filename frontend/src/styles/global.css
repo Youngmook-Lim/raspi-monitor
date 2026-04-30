@@ -10,11 +10,10 @@
   --purple: #c084fc;
   --yellow: #f472b6;
   --red: #ff4560;
-  /* --dim at 0.32 opacity yielded ~1.7:1 contrast (WCAG AA requires 4.5:1).
-     Raised to 0.70 opacity on a lighter base for ~5.3:1 contrast. */
-  --dim: rgba(190,170,255,0.70);
-  --dim2: rgba(167,139,250,0.18);
-  --text: rgba(230,220,255,0.92);
+  /* Secondary labels: raised to ~8.7:1 contrast for comfortable readability */
+  --dim: rgba(205,190,255,0.88);
+  --dim2: rgba(167,139,250,0.22);
+  --text: rgba(235,225,255,0.95);
   --border: rgba(139,108,240,0.12);
   --border2: rgba(167,139,250,0.3);
   --glow-sm: 0 0 8px rgba(167,139,250,0.35);
@@ -197,23 +196,24 @@ body {
 }
 .hdr-sep { color: var(--dim); font-size: 13px; }
 .hdr-sub { font-size: 11px; color: var(--dim); }
-.hdr-date { font-size: 11px; color: var(--dim); }
+.hdr-date { font-size: 11px; color: var(--text); }
 .hdr-time { font-size: 14px; font-weight: 600; letter-spacing: 0.09em; color: var(--text); }
 .hdr-up {
-  font-size: 10.5px;
-  color: var(--dim);
+  font-size: 11px;
+  color: var(--text);
   padding: 3px 9px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: 2px;
 }
 .hdr-status {
-  font-size: 8.5px;
+  font-size: 11px;
   letter-spacing: 0.1em;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 2px;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-weight: 600;
 }
 .hdr-dot {
   width: 7px;
@@ -222,8 +222,8 @@ body {
   animation: livePulse 1.8s ease-in-out infinite;
   flex-shrink: 0;
 }
-.hdr-status-live { border: 1px solid rgba(167,139,250,0.4); color: var(--green); }
-.hdr-status-mock { border: 1px solid rgba(244,114,182,0.35); color: var(--yellow); }
+.hdr-status-live { border: 1px solid rgba(167,139,250,0.7); color: var(--green); }
+.hdr-status-mock { border: 1px solid rgba(244,114,182,0.65); color: var(--yellow); }
 .hdr-dot-live    { background: var(--green); box-shadow: var(--glow-sm); }
 .hdr-dot-mock    { background: var(--yellow); }
 
@@ -240,20 +240,20 @@ body {
 }
 .theme-toggle-sun,
 .theme-toggle-moon {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1;
   transition: opacity 0.3s;
 }
-.theme-toggle-sun  { color: #f472b6; opacity: 0.4; }
-.theme-toggle-moon { color: #a78bfa; opacity: 0.4; }
+.theme-toggle-sun  { color: #f472b6; opacity: 0.85; }
+.theme-toggle-moon { color: #c4b5fd; opacity: 0.85; }
 .theme-toggle:hover .theme-toggle-sun,
-.theme-toggle:hover .theme-toggle-moon { opacity: 0.9; }
+.theme-toggle:hover .theme-toggle-moon { opacity: 1; }
 .theme-toggle-track {
   position: relative;
   width: 38px;
   height: 18px;
   background: var(--surface2);
-  border: 1px solid var(--border2);
+  border: 1px solid rgba(167,139,250,0.55);
   border-radius: 9px;
   transition: background 0.3s, border-color 0.3s;
   flex-shrink: 0;
