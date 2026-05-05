@@ -77,15 +77,18 @@ function CpuHistoryChart({ history }: HistoryChartProps) {
             const gy = H - (g / 100) * (H - 10) - 5
             return (
               <line key={g} x1={0} y1={gy} x2={W} y2={gy}
-                stroke="rgba(139,108,240,0.07)" strokeWidth="1" strokeDasharray="4,4" />
+                stroke="rgba(139,108,240,0.07)" strokeWidth="1" strokeDasharray="4,4"
+                vectorEffect="non-scaling-stroke" />
             )
           })}
           <path d={areaPath} fill="url(#cpuHistGrad)" />
           <path d={linePath} fill="none" stroke="#a78bfa" strokeWidth="1.5"
+            vectorEffect="non-scaling-stroke"
             style={{ filter: 'drop-shadow(0 0 3px rgba(167,139,250,0.5))' }} />
           {snap && (
             <line x1={snap.x} y1={0} x2={snap.x} y2={H}
-              stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3" />
+              stroke="rgba(167,139,250,0.3)" strokeWidth="1" strokeDasharray="3,3"
+              vectorEffect="non-scaling-stroke" />
           )}
         </svg>
         {[25, 50, 75].map(g => {
